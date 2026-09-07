@@ -9,57 +9,50 @@
  */
 class Solution {
 public:
-    void getParentNodes(TreeNode* root,
-                        unordered_map<TreeNode*, TreeNode*>& parent) {
-        if (!root)
+    void collect(TreeNode* root, int k, vector<int>& ans) {
+        if (!root || k < 0)
             return;
-        if (root->left)
-            parent[root->left] = root;
-        if (root->right)
-            parent[root->right] = root;
-        getParentNodes(root->left, parent);
-        getParentNodes(root->right, parent);
+        if (k == 0)
+            ans.push_back(root->val);
+        collect(root->left, k - 1, ans);
+        collect(root->right, k - 1, ans);
+    }
+    int dfs(TreeNode* root, TreeNode* target, int k, vector<int>& ans) {
+        if (!root)
+            return -1;
+        if (root == target) {
+            collect(target, k, ans);
+            return 0;
+        }
+        int left = dfs(root->left, target, k, ans);
+        if (left != -1) {
+            int dist = 1 + left;
+            if (dist == k) {
+                ans.push_back(root->val);
+
+            } else {
+                collect(root->right, k - dist - 1, ans);
+            }
+            return dist;
+        }
+        int right = dfs(root->right, target, k, ans);
+        if (right != -1) {
+            int dist = 1 + right;
+            if (dist == k) {
+                ans.push_back(root->val);
+
+            } else {
+                collect(root->left, k - dist - 1, ans);
+            }
+            return dist;
+        }
+        return -1;
+
     }
 
     vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {
-        if (!root || !target)
-            return {};
-        unordered_map<TreeNode*, TreeNode*> parent;
-        parent[root] = NULL;
-        vector<int> res;
-        unordered_map<TreeNode*, bool> vis;
-        queue<TreeNode*> q;
-        vis[target] = true;
-        getParentNodes(root, parent);
-        q.push(target);
-        while (k > 0 && !q.empty()) {
-            int n = q.size();
-            for (int i = 0; i < n; i++) {
-                TreeNode* curr = q.front();
-                q.pop();
-                if (curr->left && !vis[curr->left]) {
-                    q.push(curr->left);
-                    vis[curr->left] = true;
-                }
-
-                if (curr->right && !vis[curr->right]) {
-                    q.push(curr->right);
-                    vis[curr->right] = true;
-                }
-
-                if (parent[curr] && !vis[parent[curr]]) {
-                    q.push(parent[curr]);
-                    vis[parent[curr]] = true;
-                }
-            }
-            k--;
-        }
-        while (!q.empty()) {
-            res.push_back(q.front()->val);
-            q.pop();
-        }
-        return res;
+        vector<int> ans;
+        dfs(root, target,k,ans);
+        return ans;
     }
-}
-
-;
+};
