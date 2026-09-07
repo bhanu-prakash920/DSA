@@ -1,24 +1,25 @@
 class Solution {
 public:
-    long long calDis(vector<int> point) {
-        return point[0] * point[0] + point[1] * point[1];
-    }
+    
     vector<vector<int>> kClosest(vector<vector<int>>& points, int k) {
-        priority_queue<pair<long long, pair<int, int>>,
-                       vector<pair<long long, pair<int, int>>>,
-                       greater<pair<long long, pair<int, int>>>>
-            pq;
+        auto cmp = [](const vector<int> a, const vector<int> b) {
+            long long d1 = 1LL * a[0] * a[0] + 1LL * a[1] * a[1];
+            long long d2 = 1LL * b[0] * b[0] + 1LL * b[1] * b[1];
+            return d1 < d2;
+        };
+        priority_queue < vector<int>, vector<vector<int>>, decltype(cmp)>  pq;
 
         for (auto point : points) {
-            long long dis = calDis(point);
-            pq.push({dis,{point[0], point[1]}});
-
+            
+            pq.push(point);
+            if (pq.size() > k) {
+                pq.pop();
+            }
         }
-        vector<vector<int>> res(k, vector<int>(2));
-        for(int i = 0 ; i < k ; i++){
-            auto it = pq.top();
-            res[i][0] = it.second.first;
-            res[i][1] = it.second.second;
+
+        vector<vector<int>> res;
+        while (!pq.empty()) {
+            res.push_back(pq.top());
             pq.pop();
         }
         return res;
