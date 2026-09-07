@@ -11,20 +11,18 @@
  */
 class Solution {
 public:
-    void good(TreeNode* root , int m , int &count){
-        if(!root) return;
+    int good(TreeNode* root , int m){
+        if(!root) return 0;
         if(root->val >= m) {
-            m = root->val;
-           count++;
+            m = max(m ,root->val );
+            return 1+ good(root->left,m) + good(root->right,m);
         }
-        good(root->left,m,count);
-        good(root->right,m, count);
+        return good(root->left,m) + good(root->right,m);
         
     }
     int goodNodes(TreeNode* root) {
         int m = INT_MIN;
-        int count = 0;
-        good(root , m,count);
+        int count = good(root , m);
         return count;
 
         
