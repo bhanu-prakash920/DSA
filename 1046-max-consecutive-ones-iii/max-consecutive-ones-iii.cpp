@@ -9,12 +9,12 @@ public:
         while (r < n) {
             mp[nums[r]]++;
 
-            while (mp[0] > k) {
+             if(mp[0] > k) {
                 mp[nums[l]]--;
                 l++;
             }
 
-            res = max(res, r - l + 1);
+            if(mp[0] <= k)res = max(res, r - l + 1);
 
             r++;
         }
