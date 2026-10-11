@@ -6,19 +6,19 @@ public:
         string s2 = s;
         int n = s.size();
         vector<int> dp(n + 1, 0);
-        vector<int> curr(n + 1, 0);
-        int prev = 0;
+
         for (int i = 1; i <= n; i++) {
+            int diagonal = 0;
             for (int j = 1; j <= n; j++) {
+
+                int old = dp[j];
                 if (s1[i - 1] == s2[j - 1]) {
-                    curr[j] = 1+  dp[j - 1];
+                    dp[j] = 1 + diagonal;
                 } else {
-                    curr[j] = max(dp[j], prev);
+                    dp[j] = max(dp[j], dp[j - 1]);
                 }
-                prev = curr[j];
+                diagonal = old;
             }
-            dp = curr;
-            prev = 0;
         }
         return n - dp[n];
     }
